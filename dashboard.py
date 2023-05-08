@@ -74,7 +74,7 @@ def display_time_filters(df):
     year_list = list(df['Year'].unique())
     year_list.sort()
     year = st.sidebar.selectbox('Year', year_list, len(year_list) - 1)
-    quarter = st.sidebar.selectbox('Quarter', [1, 2, 3, 4])
+    quarter = st.sidebar.radio('Quarter', [1, 2, 3, 4])
     st.header(f'{year} Q{quarter}')
 
     return year, quarter
@@ -86,6 +86,11 @@ def display_state_filter(df, state_name):
     state_index = state_list.index(
         state_name) if state_name and state_name in state_list else 0
     return st.sidebar.selectbox('Select the State', state_list, state_index)
+
+
+def display_report_type():
+    report_types = ['Fraud', 'Other']
+    return st.sidebar.radio('Report Type', report_types)
 
 
 def main():
@@ -108,6 +113,7 @@ def main():
     year, quarter = display_time_filters(df_continental)
     state_name = display_map(df_continental, year, quarter)
     state_name = display_state_filter(df_continental, state_name)
+    report_type = display_report_type()
 
     # DISPLAY METRICS
     st.subheader(f'{state_name} {report_type} Facts')
