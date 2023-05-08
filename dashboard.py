@@ -70,6 +70,24 @@ def display_map(df, year, quarter):
     return state_name
 
 
+def display_time_filters(df):
+    year_list = list(df['Year'].unique())
+    year_list.sort()
+    year = st.sidebar.selectbox('Year', year_list, len(year_list) - 1)
+    quarter = st.sidebar.selectbox('Quarter', [1, 2, 3, 4])
+    st.header(f'{year} Q{quarter}')
+
+    return year, quarter
+
+
+def display_state_filter(df, state_name):
+    state_list = [''] + list(df['State Name'].unique())
+    state_list.sort()
+    state_index = state_list.index(
+        state_name) if state_name and state_name in state_list else 0
+    return st.sidebar.selectbox('Select the State', state_list, state_index)
+
+
 def main():
     st.set_page_config(APP_TITLE)
     st.title(APP_TITLE)
@@ -87,11 +105,12 @@ def main():
     report_type = 'Fraud'
 
     # DISPLAY FILTERS AND MAP
-
+    year, quarter = display_time_filters(df_continental)
     state_name = display_map(df_continental, year, quarter)
+    state_name = display_state_filter(df_continental, state_name)
 
     # DISPLAY METRICS
-    st.subheader(f'{state_name}{report_type} Facts')
+    st.subheader(f'{state_name} {report_type} Facts')
     col1, col2, col3 = st.columns(3)
     with col1:
         display_fraud_facts(df_fraud, year, quarter, state_name,
