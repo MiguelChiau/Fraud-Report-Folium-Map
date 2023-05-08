@@ -62,6 +62,12 @@ def display_map(df, year, quarter):
 
     # Displaying the map on streamlit
     st_map = st_folium(map, width=700, height=450)
+    # To get the state name and details on click
+    state_name = ''
+    if st_map['last_active_drawing']:
+        state_name = st_map['last_active_drawing']['properties']['name']
+
+    return state_name
 
 
 def main():
@@ -80,10 +86,11 @@ def main():
     state_name = ''
     report_type = 'Fraud'
 
-    # Display filters and Map
-    display_map(df_continental, year, quarter)
+    # DISPLAY FILTERS AND MAP
 
-    # Display Metrics
+    state_name = display_map(df_continental, year, quarter)
+
+    # DISPLAY METRICS
     st.subheader(f'{state_name}{report_type} Facts')
     col1, col2, col3 = st.columns(3)
     with col1:
