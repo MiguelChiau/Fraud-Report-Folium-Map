@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+import folium
+from streamlit_folium import st_folium
+
 
 APP_TITLE = 'Fraud and Identity Theft Report'
 APP_SUB_TITTLE = 'Source: Federal Trade Comission'
@@ -22,12 +25,25 @@ def display_fraud_facts(df, year, quarter, state_name, report_type, field_name, 
     st.metric(metric_title, number_format.format(round(total)))
 
 
+def display_map(df, year, quarter):
+    df = df[(df['Year'] == year) & (df['Quarter'] == quarter)]
+
+    map = folium.Map(location=[38, -96.5], zoom_start=4,
+                     scrollWheelZoom=False, tiles='CartoDB positron')
+    st_map = st_folium(map, width=700, height=450)
+
+    st.write(df.shape)
+    st.write(df.head())
+    st.write(df.columns)
+
+
 def main():
     st.set_page_config(APP_TITLE)
     st.title(APP_TITLE)
     st.caption(APP_SUB_TITTLE)
 
     # LOADING THE DATASET
+    df_continental = pd.read_csv('data/AxS-Continental_Full Data_data.csv')
     df_fraud = pd.read_csv('data/AxS-Fraud Box_Full Data_data.csv')
     df_median = pd.read_csv('data/AxS-Median Box_Full Data_data.csv')
     df_loss = pd.read_csv('data/AxS-Losses Box_Full Data_data.csv')
@@ -36,10 +52,9 @@ def main():
     quarter = 1
     state_name = ''
     report_type = 'Fraud'
-    #field_name = 'State Fraud/Other Count'
-    # metric_title = f'\# of {report_type} Reports'
 
     # Display filters and Map
+    display_map(df_continental, year, quarter)
 
     # Display Metrics
     st.subheader(f'{state_name}{report_type} Facts')
